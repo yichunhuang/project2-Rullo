@@ -1,0 +1,19 @@
+<% include header %>
+
+<body>
+  <div class="container">
+      <% include banner %>
+    <div class="row" style="margin-top: 100px;">
+      <div class="col-12">
+        <hr style="border:dashed;border-color:pink;border-width:2px;">
+        <h3 style=" margin:40px 0 10px 50px;color: #495057;"><%= title %></h3>
+        <span id="idtoken"></span>
+        <div id="plans">
+        </div>
+      </div>
+    </div>
+  </div>
+  <% include footer %>
+</body>
+<script src="<%= script_src %>"></script>
+<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>

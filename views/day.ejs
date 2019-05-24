@@ -1,0 +1,74 @@
+<% include header %>
+<body>
+  <div class="container">
+      <% include banner %>
+    <div class="row" style="margin-top: 100px;">
+      <div class="col-12">
+        <hr style="border:dashed;border-color:pink;border-width:2px;">
+        <button id="my_plan" type='button' class='btn btn-outline-primary' onclick="myPlan()"
+        style=" margin:30px 0 5px 320px;background:#0066cc;border-color:#0066cc;color:white;">
+        <h6 style="margin-top:6px;">My Plan</h6>
+    </button>
+
+
+    <button id="backToHome"
+        style='margin: 30px 0 40px 290px;padding-top:5px;border-radius: 3px;border-color:#0066cc;color:#0066cc;'
+        type="submit" onclick="back()">回前頁</button>
+    <button type="submit"
+        style=' margin: 30px 0 40px 20px;height:45px;border-radius: 3px;border-color:#ff8080;color:#ff8080;'
+        onclick="calendar()">匯入Google Calendar</button>
+    <a href="https://www.google.com/calendar" target="_blank"> <button type="submit"
+            style=' margin-left:20px;height:45px;border-radius: 3px;border-color:#ff8080;color:#ff8080;'>Google
+            Calendar</button></a>
+    <!-- https://semantic-ui.com/collections/message.html  -->
+    <div class="ui message" id="myPlan"
+        style="margin:30px 170px;  border:dotted;  border-radius: 25px; border-color:#99bbff; background-color:#ffe6e6;">
+        <div class="messageplan" style="padding:20px;">
+            <p>計畫公開與否: </p>
+            <div id="category"></div>
+            <br>
+            <p>主題 Topic: </p>
+            <div id="topic"></div>
+            <br>
+            <p>時長 Period: </p>
+            <div id="period"></div>
+            <br>
+            <p>目標 Goal: </p>
+            <div id="goal"></div>
+            <br>
+            <p id="addrules"></p>
+            <div id="rules"></div>
+            <br>
+            <p id="addtrigger"></p>
+            <div id="trigger"></div>
+            <br>
+            <p id="addpunish"></p>
+            <div id="punish"></div>
+            <br>
+            <p>修改計畫照片:</p>
+            <input class="form-control" class="input" style=" border-radius: 10px;width:300px;padding:4px;display: inline-block;" type="file" id="i" name="planImage" />
+            <button type='button' class='btn btn-outline-primary' onclick="editImage()"
+                style=" margin:0px 0 5px 20px;background:#0066cc;border-color:#0066cc;color:white;">
+                <h6 style="margin-top:6px;">更換計劃照片</h6>
+            </button>
+            <br>
+            <button type='button' class='btn btn-danger' onclick="editPlan()">更新</button>
+        </div>
+    </div>
+    <div style="float:left;" id="left-ad"></div>
+    <div style="margin-left:200px;">
+        <div id="each-day-day"></div>
+    </div>
+       
+      </div>
+      <span id="idtoken"></span>
+			<input type="hidden" id="Plan_id" name="plan_id" />
+			<input type="hidden" id="Day" name="day" />
+			<input type="hidden" id="Rules-length" name="rules-length" />
+			<input type="hidden" id="timePerDay" />
+    </div>
+  </div>
+  <% include footer %>
+</body>
+<script src="<%= script_src %>"></script>
+<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>

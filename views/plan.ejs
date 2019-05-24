@@ -1,0 +1,74 @@
+<% include header %>
+<body>
+  <div class="container">
+      <% include banner %>
+    <div class="row" style="margin-top: 100px;">
+      <div class="col-12">
+        <hr style="border:dashed;border-color:pink;border-width:2px;">
+        <form action="../plan" method="POST" enctype="multipart/form-data" style="margin:70px 60px 0 60px;border:solid;border-color:lavenderblush;background:#FFFAFA;padding:40px 80px 40px 40px;border-radius: 30px;">
+          <div class="form-group">
+            <label for="formGroupExampleInput">主題</label>
+            <input type="text" class="form-control" id="formGroupExampleInput" name="topic"
+              placeholder="計畫的類型" required>
+          </div>
+          <div class="form-group">
+            <label for="formGroupExampleInput2">計畫時長</label>
+            <input type="text" class="form-control" id="formGroupExampleInput2" name="period"
+              placeholder="幾日內要達成這個計畫" required>
+          </div>
+          <div class="form-group">
+            <!-- <label for="formGroupExampleInput3">目標</label> -->
+            <label>目標</label>
+            <input type="text" class="form-control" name="goal" placeholder="我的目標！我希望我能達成..." required>
+          </div>
+          <div class="form-group">
+            <label>計畫公開與否</label><br>
+            <select name="category"  style="margin-left:10px;">
+              <option class="form-control" value="1">公開</option>
+              <option class="form-control" value="0">私密</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <p>為我的計劃新增照片:</p>
+            <input class="form-control" style="padding:4px;" type="file" name="planImage"  />
+          </div>
+          <div class="form-group">
+            <label>每日事項</label>
+            <i class="fas fa-plus-circle" style="color:pink; padding: 0 0 0 20px;" class="myMOUSE" onclick="add('rules', '這段期間,我每天都一定要做的例行事項','rules','hiddenRule')"></i>
+            <table id="rules">
+            </table>
+            <span id="hiddenRule"></span>
+          
+            
+          </div>
+          <div class="form-group">
+            <label>定時通知</label>
+            <i class="fas fa-plus-circle" style="color:pink; padding: 0 0 0 20px;" class="myMOUSE" onclick="trig('trigger','時間一到，提醒我做事！','trigger','hiddenTrig')"></i>
+            <table id="trigger">
+            </table>
+            <span id="hiddenTrig"></span>
+            
+          </div>
+          <div class="form-group">
+            <label>處罰</label>
+            <i class="fas fa-plus-circle" style="color:pink; padding: 0 0 0 20px;" class="myMOUSE" onclick="add('break','如果違反規定，隔日，我要這麼懲罰自己！','punish','hiddenPunishment')"></i>
+            <div style="color:gray;font-size:15px;"> 如果今日之每日事項未完成，會將處罰事項新增到明日待辦清單</div>
+            
+            <table id="break">
+            </table>
+            <span id="hiddenPunishment"></span>
+          
+          </div>
+          <input type=hidden id="userId" name='user_id'>
+          <input type=hidden id="userName" name='user_name'>
+          <button type="submit" class="btn btn-outline-danger" style="margin-top:10px;color:pink;border-color:pink;border:solid;">建立計畫</button>
+        </form>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <% include footer %>
+</body>
+<script src="<%= script_src %>"></script>
+<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>

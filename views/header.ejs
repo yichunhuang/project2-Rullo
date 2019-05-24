@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Main web</title>
+  <meta charset="UTF-8">
+  <meta name="google-signin-client_id"
+    content="173888219632-j8dr1o2u5b32g3r02ea85ug8ag3p6kkb.apps.googleusercontent.com">
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+    integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+</head>
+<header>
+  <div class="container">
+    <nav class="navbar navbar-expand-md navbar-light fixed-top" style="background:#99bbff;">
+      <a class="navbar-brand" style="color: white;font-size: 1.3rem;font-weight: 500;margin-left:15px;">Rullo</a>
+      <div class="collapse navbar-collapse" id="navbarCollapse" style="margin-right: 20px;">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="index" style="color: white;font-size: 1rem;font-weight: 500;">Home <span
+                class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" style="color: white;font-size: 1rem;font-weight: 500;" href="#"
+              onclick="about()">About</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" id="myplan_nav" style="color: blue;font-size: 1rem;font-weight: 500;" href="#"
+              onclick="private()"></a>
+          </li>
+
+          <li class="nav-item active">
+            <a class="nav-link" id="nav_login" style="color: white;font-size: 1rem;font-weight: 500;" href="#"
+              onclick="login()">Login</a>
+          </li>
+
+          <li class="nav-item active">
+            <a class="nav-link" id="nav_logined" style="margin-left:600px;color: blue;font-size: 1rem;font-weight: 700;"
+              href="#"></a>
+          </li>
+
+          <li class="nav-item active">
+            <a class="nav-link"><img id="nav_pic" style=" border-radius: 4px;
+                    width: 28px;" /></a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" id="signout" style="margin-left:3px;color: white;font-size: 1rem;font-weight: 500;"
+              href="#" onclick="signOut()"></a>
+          </li>
+          <form class="form-inline mt-2 mt-md-0" action="../search" method="POST" style="margin-right:1px;">
+            <input class="form-control mr-sm-2" type="text" name="search" placeholder="輸入主題" aria-label="Search">
+            <input type="hidden" name="whichPage" id="which_page">
+            <button class="btn btn-primary my-2 my-sm-0" type="submit"
+              style="background-color:#0073e6;border-color:#0073e6;">Search</button>
+          </form>
+        </ul>
+      </div>
+    </nav>
+  </div>
+</header>
+<script>
+  
+    let url = decodeURI(location);
+    console.log("header",url.substring(19));//https://17runa.com之後
+   console.log("header",url.substring(19,25));
+   document.getElementById("which_page").value = url.substring(19,25);
+</script>
