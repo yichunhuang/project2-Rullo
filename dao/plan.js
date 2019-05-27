@@ -5,8 +5,18 @@ module.exports = {
     insertUserPlan: function (data) {
         return new Promise(function (resolve, reject) {
             const { user_name, user_id, category, topic, period, goal, rules, trigger, punish, hiddenRule, hiddenTrig, triggerTime, hiddenPunishment, image } = data;
-            let query = `INSERT INTO plan(topic,period,goal,user_id,user_name,status,image,time) VALUES ("${topic}","${period}","${goal}",${user_id},"${user_name}",${category},"${image}",${Date.now()});`;
-            mysql.con.query(query, function (error) {
+            let plan={
+                topic:topic,
+                period:period,
+                goal:goal,
+                user_id:user_id,
+                user_name:user_name,
+                status:status,
+                image:image,
+                time:Date.now()
+            };
+            let query = "INSERT INTO plan SET ?";
+            mysql.con.query(query,plan, function (error) {
                 if (error) {
                     reject("Database query error" + error);
                     return;
@@ -20,16 +30,20 @@ module.exports = {
                     let plan_id = result[0].id;
                     //rules
                     if (!hiddenRule) {
-                        let query = `INSERT INTO rules(plan_id) VALUES (${plan_id});`;
-                        mysql.con.query(query, function (error) {
+                        let query = "INSERT INTO rules(plan_id) VALUES ?;";
+                        mysql.con.query(query,[plan_id], function (error) {
                             if (error) {
                                 reject("Database query error");
                                 return;
                             }
                         });
                     } else if (hiddenRule == 1) {
-                        let query = `INSERT INTO rules(plan_id,rule) VALUES (${plan_id},"${rules}");`;
-                        mysql.con.query(query, function (error) {
+                        let data = {
+                            plan_id:plan_id,
+                            rule:rules
+                        }
+                        let query = "INSERT INTO rules SET ?";
+                        mysql.con.query(query,data, function (error) {
                             if (error) {
                                 reject("Database query error");
                                 return;
@@ -37,8 +51,12 @@ module.exports = {
                         });
                     } else {
                         rules.forEach(function (rule) {
-                            let query = `INSERT INTO rules(plan_id,rule) VALUES (${plan_id},"${rule}");`;
-                            mysql.con.query(query, function (error) {
+                            let data = {
+                                plan_id:plan_id,
+                                rule:rule
+                            }
+                            let query = "INSERT INTO rules SET ?";
+                            mysql.con.query(query,data, function (error) {
                                 if (error) {
                                     reject("Database query error");
                                     return;
@@ -48,16 +66,21 @@ module.exports = {
                     }
                     //trigger
                     if (!hiddenTrig) {
-                        let query = `INSERT INTO` + '`trigger`' + ` (plan_id) VALUES (${plan_id});`;
-                        mysql.con.query(query, function (error) {
+                        let query = `INSERT INTO` + '`trigger`' + ` (plan_id) VALUES ?`;
+                        mysql.con.query(query,[plan_id], function (error) {
                             if (error) {
                                 reject("Database query error");
                                 return;
                             }
                         });
                     } else if (hiddenTrig == 1) {
-                        let query = `INSERT INTO ` + '`trigger`' + ` (plan_id,trig,time) VALUES (${plan_id},"${trigger}","${triggerTime}");`;
-                        mysql.con.query(query, function (error) {
+                        let data = {
+                            plan_id:plan_id,
+                            trig:trigger,
+                            time:triggerTime
+                        }
+                        let query = `INSERT INTO ` + '`trigger`' `SET ?`;
+                        mysql.con.query(query,data, function (error) {
                             if (error) {
                                 reject("Database query error");
                                 return;
@@ -65,8 +88,13 @@ module.exports = {
                         });
                     } else {
                         for (var i = 0; i < hiddenTrig; i++) {
-                            let query = `INSERT INTO ` + '`trigger`' + ` (plan_id,trig,time) VALUES (${plan_id},"${trigger[i]}","${triggerTime[i]}");`;
-                            mysql.con.query(query, function (error) {
+                            let data = {
+                                plan_id:plan_id,
+                                trig:trigger[i],
+                                time:triggerTime[i]
+                            }
+                            let query = `INSERT INTO ` + '`trigger`' `SET ?`;
+                            mysql.con.query(query,data, function (error) {
                                 if (error) {
                                     reject("Database query error");
                                     return;
@@ -76,8 +104,8 @@ module.exports = {
                     }
                     //punish
                     if (!hiddenPunishment) {
-                        let query = `INSERT INTO punish(plan_id) VALUES (${plan_id});`;
-                        mysql.con.query(query, function (error) {
+                        let query = `INSERT INTO punish(plan_id) VALUES ?`;
+                        mysql.con.query(query,[plan_id], function (error) {
                             if (error) {
                                 reject("Database query error");
                                 return;
@@ -85,8 +113,12 @@ module.exports = {
 
                         });
                     } else if (hiddenPunishment == 1) {
-                        let query = `INSERT INTO punish(plan_id,punishment) VALUES (${plan_id},"${punish}");`;
-                        mysql.con.query(query, function (error) {
+                        let data = {
+                            plan_id:plan_id,
+                            punishment:punish
+                        }
+                        let query = `INSERT INTO punish SET ?`;
+                        mysql.con.query(query,data, function (error) {
                             if (error) {
                                 reject("Database query error");
                                 return;
@@ -94,9 +126,13 @@ module.exports = {
                         });
                     } else {
                         punish.forEach(function (punishment) {
-                            let query = `INSERT INTO punish(plan_id,punishment) VALUES (${plan_id},"${punishment}");`;
+                            let data = {
+                                plan_id:plan_id,
+                                punishment:punishment
+                            }
+                            let query = `INSERT INTO punish SET ?`;
 
-                            mysql.con.query(query, function (error) {
+                            mysql.con.query(query,data, function (error) {
                                 if (error) {
                                     reject("Database query error");
                                     return;
@@ -105,8 +141,8 @@ module.exports = {
                         });
                     }
                     //periodTime
-                    let query = `SELECT time FROM plan WHERE id=${plan_id}`;
-                    mysql.con.query(query, function (error, result) {
+                    let query = `SELECT time FROM plan WHERE id= ?`;
+                    mysql.con.query(query,[plan_id], function (error, result) {
                         if (error) {
                             reject("Database query error");
                             return;
@@ -115,15 +151,25 @@ module.exports = {
                         for (var i = 0; i < period; i++) {
                             let j = i + 1;
                             a += (1000 * 24 * 60 * 60);
-                            let query = `INSERT INTO periodTime(plan_id,day,time) VALUES(${plan_id}, ${j} ,${a})`;
-                            mysql.con.query(query, function (error) {
+                            let data = {
+                                plan_id:plan_id,
+                                day:j,
+                                time:a
+                            }
+                            let query = `INSERT INTO periodTime SET ?`;
+                            mysql.con.query(query,data, function (error) {
                                 if (error) {
                                     reject("Database query error");
                                     return;
                                 }
-                                //rulePerDay                
-                                let query = `INSERT INTO rulePerDay(plan_id,day,status) VALUES(${plan_id}, ${j} ,0)`;
-                                mysql.con.query(query, function (error) {
+                                //rulePerDay 
+                                let dataRulePerDay = {
+                                    plan_id:plan_id,
+                                    day:j,
+                                    status:0
+                                }               
+                                let query = `INSERT INTO rulePerDay SET ?`;
+                                mysql.con.query(query,dataRulePerDay, function (error) {
                                     if (error) {
                                         reject("Database query error");
                                         return;
@@ -145,8 +191,8 @@ module.exports = {
             if (!data.image) {
                 resolve("請上傳照片，再按更新");
             } else {
-                let query = `UPDATE plan SET image='${data.image}' WHERE id=${data.plan_id};`
-                mysql.con.query(query, function (error) {
+                let query = `UPDATE plan SET image='${data.image}' WHERE id= ?`
+                mysql.con.query(query,[data.plan_id], function (error) {
                     if (error) {
                         reject("Database query error" + error);
                         return;
@@ -158,50 +204,50 @@ module.exports = {
     },
     deleteUserPlan: function (plan_id) {
         return new Promise(function (resolve, reject) {
-            let query = `DELETE FROM` + '`trigger`' + `WHERE plan_id= ${plan_id};`
-            mysql.con.query(query, function (error) {
+             let query = `DELETE FROM` + '`trigger`' + `WHERE plan_id= ?`
+            mysql.con.query(query,[plan_id], function (error) {
                 if (error) {
                     reject("Database query error" + error);
                     return;
                 }
-                let query = `DELETE FROM rules WHERE plan_id= ${plan_id};`
-                mysql.con.query(query, function (error) {
+                let query = `DELETE FROM rules WHERE plan_id= ?`
+                mysql.con.query(query,[plan_id], function (error) {
                     if (error) {
                         reject("Database query error" + error);
                         return;
                     }
-                    let query = `DELETE FROM rulePerDay WHERE plan_id=${plan_id} ;`;
-                    mysql.con.query(query, function (error) {
+                    let query = `DELETE FROM rulePerDay WHERE plan_id= ?`;
+                    mysql.con.query(query,[plan_id], function (error) {
                         if (error) {
                             reject("Database query error" + error);
                             return;
                         }
-                        let query = `DELETE FROM punish WHERE plan_id= ${plan_id};`
-                        mysql.con.query(query, function (error) {
+                        let query = `DELETE FROM punish WHERE plan_id= ?`
+                        mysql.con.query(query,[plan_id],function (error) {
                             if (error) {
                                 reject("Database query error" + error);
                                 return;
                             }
-                            let query = `DELETE FROM planning WHERE plan_id=${plan_id} ;`;
-                            mysql.con.query(query, function (error) {
+                            let query = `DELETE FROM planning WHERE plan_id=?`;
+                            mysql.con.query(query,[plan_id], function (error) {
                                 if (error) {
                                     reject("Database query error" + error);
                                     return;
                                 }
-                                let query = `DELETE FROM periodTime WHERE plan_id= ${plan_id};`
-                                mysql.con.query(query, function (error) {
+                                let query = `DELETE FROM periodTime WHERE plan_id= ?`
+                                mysql.con.query(query,[plan_id], function (error) {
                                     if (error) {
                                         reject("Database query error" + error);
                                         return;
                                     }
-                                    let query = `DELETE FROM comment WHERE plan_id=${plan_id} ;`;
-                                    mysql.con.query(query, function (error) {
+                                    let query = `DELETE FROM comment WHERE plan_id= ?`;
+                                    mysql.con.query(query,[plan_id], function (error) {
                                         if (error) {
                                             reject("Database query error" + error);
                                             return;
                                         }
-                                        let query = `DELETE FROM plan WHERE id= ${plan_id};`
-                                        mysql.con.query(query, function (error) {
+                                        let query = `DELETE FROM plan WHERE id= ？`
+                                        mysql.con.query(query,[plan_id],function (error) {
                                             if (error) {
                                                 reject("Database query error" + error);
                                                 return;
@@ -221,21 +267,26 @@ module.exports = {
     updateUserPlan: function (data) {
         return new Promise(function (resolve, reject) {
             const { category, plan_id, topic, period, goal, trigger, rules, punish } = data;
-            let query = `UPDATE plan SET topic="${topic}",period=${period},goal="${goal}",status=${category} WHERE id=${plan_id};`
-            mysql.con.query(query, function (error) {
+            let query = `UPDATE plan SET topic="${topic}",period=${period},goal="${goal}",status=${category} WHERE id=?`
+            mysql.con.query(query,[plan_id], function (error) {
                 if (error) {
                     reject("Database query error1");
                     return;
                 }
-                let query = `DELETE FROM` + '`trigger`' + `WHERE plan_id= ${plan_id};`
-                mysql.con.query(query, function (error) {
+                let query = `DELETE FROM` + '`trigger`' + `WHERE plan_id= ?`
+                mysql.con.query(query,[plan_id], function (error) {
                     if (error) {
                         reject("Database query error");
                         return;
                     }
                     for (let i = 0; i < trigger.trigger.length; i++) {
-                        let query = `INSERT INTO` + '`trigger`' + `(trig,time,plan_id) VALUES ("${trigger.trigger[i]}","${trigger.time[i]}",${plan_id})`;
-                        mysql.con.query(query, function (error) {
+                        let data = {
+                            trig:trigger.trigger[i],
+                            time:trigger.time[i],
+                            plan_id:plan_id
+                        }
+                        let query = `INSERT INTO` + '`trigger`' + `SET ? `;
+                        mysql.con.query(query,data, function (error) {
                             if (error) {
                                 reject("Database query error");
                                 return;
@@ -243,15 +294,20 @@ module.exports = {
                         });
                     }
                     //rules
-                    let query = `DELETE FROM rules WHERE plan_id= ${plan_id};`
-                    mysql.con.query(query, function (error) {
+                    let query = `DELETE FROM rules WHERE plan_id= ?`
+                    mysql.con.query(query,[plan_id], function (error) {
                         if (error) {
                             reject("Database query error");
                             return;
                         }
                         for (let i = 0; i < rules.length; i++) {
-                            let query = `INSERT INTO rules(rule,plan_id) VALUES ("${rules[i]}",${plan_id})`;
-                            mysql.con.query(query, function (error) {
+                            let data = {
+                                rule:rules[i],
+                                plan_id:plan_id
+
+                            }
+                            let query = `INSERT INTO rules SET ?`;
+                            mysql.con.query(query,data, function (error) {
                                 if (error) {
                                     reject("Database query error");
                                     return;
@@ -259,15 +315,19 @@ module.exports = {
                             });
                         }
                         //punish
-                        let query = `DELETE FROM punish WHERE plan_id= ${plan_id};`
-                        mysql.con.query(query, function (error) {
+                        let query = `DELETE FROM punish WHERE plan_id= ?`
+                        mysql.con.query(query,[plan_id], function (error) {
                             if (error) {
                                 reject("Database query error");
                                 return;
                             }
                             for (let i = 0; i < parseInt(punish.length); i++) {
-                                let query = `INSERT INTO punish(punishment,plan_id) VALUES ("${punish[i]}",${plan_id})`;
-                                mysql.con.query(query, function (error) {
+                                let data = {
+                                    punishment:punish[i],
+                                    plan_id:plan_id
+                                }
+                                let query = `INSERT INTO punish SET ?`;
+                                mysql.con.query(query,data, function (error) {
                                     if (error) {
                                         reject("Database query error2");
                                         return;
@@ -275,8 +335,8 @@ module.exports = {
                                 });
                             }
                             //timePeriod 
-                            let query = `SELECT * FROM periodTime WHERE plan_id=${plan_id}`;
-                            mysql.con.query(query, function (error, resulttp) {
+                            let query = `SELECT * FROM periodTime WHERE plan_id= ?`;
+                            mysql.con.query(query,[plan_id],function (error, resulttp) {
                                 if (error) {
                                     reject("Database query error");
                                     return;
@@ -285,14 +345,14 @@ module.exports = {
                                     //period沒變不用改period生成的每日匡time
                                     resolve("更新成功！！");
                                 } else {
-                                    let query = `DELETE FROM periodTime WHERE plan_id= ${plan_id};`
-                                    mysql.con.query(query, function (error) {
+                                    let query = `DELETE FROM periodTime WHERE plan_id= ?`
+                                    mysql.con.query(query,[plan_id], function (error) {
                                         if (error) {
                                             reject("Database query error");
                                             return;
                                         }
-                                        let query = `SELECT time FROM plan WHERE id=${plan_id}`;
-                                        mysql.con.query(query, function (error, result) {
+                                        let query = `SELECT time FROM plan WHERE id=?`;
+                                        mysql.con.query(query,[plan_id], function (error, result) {
                                             if (error) {
                                                 reject("Database query error");
                                                 return;
@@ -301,8 +361,13 @@ module.exports = {
                                             for (var i = 0; i < period; i++) {
                                                 let j = i + 1;
                                                 a += (1000 * 24 * 60 * 60);
-                                                let query = `INSERT INTO periodTime(plan_id,day,time) VALUES(${plan_id}, ${j} ,${a})`;
-                                                mysql.con.query(query, function (error) {
+                                                let data = {
+                                                    plan_id: plan_id,
+                                                    day:j,
+                                                    time:a
+                                                }
+                                                let query = `INSERT INTO periodTime SET ?`;
+                                                mysql.con.query(query,data, function (error) {
                                                     if (error) {
                                                         reject("Database query error");
                                                         return;
@@ -325,16 +390,16 @@ module.exports = {
     },
     selectUserPlan: function (plan_id) {
         return new Promise(function (resolve, reject) {
-            let query = `SELECT * FROM plan WHERE id =${plan_id};`
-            mysql.con.query(query, function (error, result) {
+            let query = `SELECT * FROM plan WHERE id =?`
+            mysql.con.query(query,[plan_id], function (error, result) {
                 if (error) {
                     reject("Database query error1");
                     return;
                 }
-                let query = `SELECT rule FROM rules WHERE plan_id = ${plan_id};`
+                let query = `SELECT rule FROM rules WHERE plan_id = ?`
                 let o = {};
                 let r = [];
-                mysql.con.query(query, function (error, resultr) {
+                mysql.con.query(query,[plan_id], function (error, resultr) {
                     if (error) {
                         reject("Database query error2");
                         return;
@@ -349,15 +414,15 @@ module.exports = {
                         r.push(rule.rule);
                     });
                     o.rules = r;
-                    let query = `SELECT trig, time FROM ` + '`trigger`' + ` WHERE plan_id= ${plan_id};`;
-                    mysql.con.query(query, function (error, resultt) {
+                    let query = `SELECT trig, time FROM ` + '`trigger`' + ` WHERE plan_id=?`;
+                    mysql.con.query(query,[plan_id], function (error, resultt) {
                         if (error) {
                             reject("Database query error3");
                             return;
                         }
                         o.trigger = resultt;
-                        let query = `SELECT punishment FROM punish WHERE plan_id= ${plan_id};`;
-                        mysql.con.query(query, function (error, resultp) {
+                        let query = `SELECT punishment FROM punish WHERE plan_id= ?`;
+                        mysql.con.query(query,[plan_id], function (error, resultp) {
                             if (error) {
                                 reject("Database query error4");
                                 return;
@@ -365,8 +430,8 @@ module.exports = {
                             o.punish = resultp;
                             //
                             let a = [];
-                            let query = `SELECT time FROM periodTime WHERE plan_id= ${plan_id};`;
-                            mysql.con.query(query, function (error, resultpt) {
+                            let query = `SELECT time FROM periodTime WHERE plan_id= ?`;
+                            mysql.con.query(query,[plan_id], function (error, resultpt) {
                                 if (error) {
                                     reject("Database query error5");
                                     return;
@@ -389,8 +454,13 @@ module.exports = {
             const { plan_id, day, hiddenComment, comment, hiddenPlanning, plantext, checkboxPlan0 } = data;
             //comment
             if (hiddenComment == 1) {
-                let query = `INSERT INTO comment(plan_id,day,comment) VALUES (${plan_id},${day},"${comment}");`;
-                mysql.con.query(query, function (error) {
+                let data = {
+                    plan_id:plan_id,
+                    day:day,
+                    comment:comment
+                }
+                let query = `INSERT INTO comment SET ?`;
+                mysql.con.query(query,data, function (error) {
                     if (error) {
                         reject("Database query error");
                         return;
@@ -398,8 +468,13 @@ module.exports = {
                 });
             } else {
                 comment.forEach(function (com) {
+                    let data = {
+                        plan_id:plan_id,
+                        day:day,
+                        comment:com
+                    }
                     let query = `INSERT INTO comment(plan_id,day,comment) VALUES (${plan_id},${day},"${com}");`;
-                    mysql.con.query(query, function (error) {
+                    mysql.con.query(query,data, function (error) {
                         if (error) {
                             reject("Database query error");
                             return;
@@ -410,16 +485,28 @@ module.exports = {
             //planning
             if (hiddenPlanning == 1) {
                 if (!checkboxPlan0) {
-                    let query = `INSERT INTO planning(plan_id,day,plan,status) VALUES (${plan_id},${day},"${plantext}",0);`;
-                    mysql.con.query(query, function (error) {
+                    let data = {
+                        plan_id:plan_id,
+                        day:day,
+                        plan:plantext,
+                        status:0
+                    }
+                    let query = `INSERT INTO planning SET ?`;
+                    mysql.con.query(query,data, function (error) {
                         if (error) {
                             reject("Database query error");
                             return;
                         }
                     });
                 } else {
-                    let query = `INSERT INTO planning(plan_id,day,plan,status) VALUES (${plan_id},${day},"${plantext}",${checkboxPlan0});`;
-                    mysql.con.query(query, function (error) {
+                    let data = {
+                        plan_id:plan_id,
+                        day:day,
+                        plan:plantext,
+                        status:checkboxPlan0
+                    }
+                    let query = `INSERT INTO planning SET ?`;
+                    mysql.con.query(query,data, function (error) {
                         if (error) {
                             reject("Database query error");
                             return;
@@ -486,22 +573,22 @@ module.exports = {
         return new Promise(function (resolve, reject) {
             //rulePerDay, Planning, Comment
             let o = {};
-            let query = `SELECT comment FROM comment WHERE plan_id =${plan_id} and day=${DAY};`
-            mysql.con.query(query, function (error, result) {
+            let query = `SELECT comment FROM comment WHERE plan_id =${plan_id} and day= ?`
+            mysql.con.query(query,[DAY], function (error, result) {
                 if (error) {
                     reject("Database query error");
                     return;
                 }
                 o.comment = result;
-                let query = `SELECT plan,status FROM planning WHERE plan_id =${plan_id} and day=${DAY};`
-                mysql.con.query(query, function (error, resultp) {
+                let query = `SELECT plan,status FROM planning WHERE plan_id =${plan_id} and day= ?`
+                mysql.con.query(query,[DAY], function (error, resultp) {
                     if (error) {
                         reject("Database query error");
                         return;
                     }
                     o.planning = resultp;
-                    let query = `SELECT status FROM rulePerDay WHERE plan_id= ${plan_id} and day=${DAY};`;
-                    mysql.con.query(query, function (error, resultr) {
+                    let query = `SELECT status FROM rulePerDay WHERE plan_id= ${plan_id} and day= ?`;
+                    mysql.con.query(query,[DAY], function (error, resultr) {
                         if (error) {
                             reject("Database query error");
                             return;
@@ -517,20 +604,20 @@ module.exports = {
     deletePerDay: function (data) {
         return new Promise(function (resolve, reject) {
             const { plan_id, day } = data;
-            let query = `DELETE FROM rulePerDay WHERE plan_id=${plan_id} AND day=${day};`;
-            mysql.con.query(query, function (error) {
+            let query = `DELETE FROM rulePerDay WHERE plan_id=${plan_id} AND day= ?`;
+            mysql.con.query(query,[DAY], function (error) {
                 if (error) {
                     reject("Database query error");
                     return;
                 }
-                let query = `DELETE FROM planning WHERE plan_id=${plan_id} AND day=${day};`;
-                mysql.con.query(query, function (error) {
+                let query = `DELETE FROM planning WHERE plan_id=${plan_id} AND day=?`;
+                mysql.con.query(query,[DAY], function (error) {
                     if (error) {
                         reject("Database query error");
                         return;
                     }
-                    let query = `DELETE FROM comment WHERE plan_id=${plan_id} AND day=${day};`;
-                    mysql.con.query(query, function (error) {
+                    let query = `DELETE FROM comment WHERE plan_id=${plan_id} AND day=?`;
+                    mysql.con.query(query,[DAY], function (error) {
                         if (error) {
                             reject("Database query error");
                             return;
