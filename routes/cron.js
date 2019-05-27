@@ -12,8 +12,8 @@ const mysql = require("../mysqlcon.js");
              //console.log(result[0].period); 
             // console.log(result[0].id); 
             for (let i = 0; i < result.length; i++) {
-                let query2 = `SELECT time,day FROM periodTime where plan_id =${result[i].id}`;
-                mysql.con.query(query2, function (error, result2) {//each plan 的period數(result[i].period) 應該要等於生成time #（result2.length）
+                let query2 = `SELECT time,day FROM periodTime where plan_id = ?`;
+                mysql.con.query(query2,[result[i].id], function (error, result2) {//each plan 的period數(result[i].period) 應該要等於生成time #（result2.length）
                     if (error) {
                         reject("Database query error" + error);
                         return;
@@ -34,8 +34,8 @@ const mysql = require("../mysqlcon.js");
                                 //設定排程:
                                 console.log("設定plan_id:", result[i].id, "的排程,day:", result2[j].day);
                                 //1. 看每日planning 完成沒 沒有完成就順延到明日
-                                let query3 = `SELECT status,plan FROM planning where plan_id =${result[i].id} and day=${result2[j].day}`;
-                                mysql.con.query(query3, function (error, result3) {//each plan, each day的 #planning = result3.length
+                                let query3 = `SELECT status,plan FROM planning where plan_id =${result[i].id} and day= ?`;
+                                mysql.con.query(query3,[result2[j].day], function (error, result3) {//each plan, each day的 #planning = result3.length
                                     if (error) {
                                         reject("Database query error" + error);
                                         return;
@@ -44,8 +44,14 @@ const mysql = require("../mysqlcon.js");
                                         if (result3[k].status == 0) {
                                             //明日的planning增加此未完成之計畫
                                             let tomorrow = parseInt(result2[j].day) + 1;
-                                            let query4 = `INSERT INTO planning(plan_id,day,status,plan) VALUES(${result[i].id},${tomorrow},0,"${result3[k].plan}")`;
-                                            mysql.con.query(query4, function (error) {
+                                            let data = {
+                                                plan_id:result[i].id,
+                                                day:tomorrow,
+                                                status:0,
+                                                plan:result3[k].plan
+                                            }
+                                            let query4 = `INSERT INTO planning SET ?`;
+                                            mysql.con.query(query4,data, function (error) {
                                                 if (error) {
                                                     reject("Database query error" + error);
                                                     return;
@@ -55,8 +61,8 @@ const mysql = require("../mysqlcon.js");
                                     }
                                 });
                                 //2. 看每日必做有沒有做 沒有就增加處罰
-                                let query5 = `SELECT status FROM rulePerDay where plan_id =${result[i].id} and day=${result2[j].day}`;
-                                mysql.con.query(query5, function (error, result4) {//each plan, each day的 #rule status = result4.length
+                                let query5 = `SELECT status FROM rulePerDay where plan_id =${result[i].id} and day= ?`;
+                                mysql.con.query(query5,[result2[j].day], function (error, result4) {//each plan, each day的 #rule status = result4.length
                                     if (error) {
                                         reject("Database query error" + error);
                                         return;
@@ -71,16 +77,22 @@ const mysql = require("../mysqlcon.js");
                                    // console.log("a",a);
                                     if (a == 0) {//有一rule沒做 a 就等於0 
                                         //明日的planning增加處罰
-                                        let query6 = `SELECT punishment FROM punish where plan_id =${result[i].id}`;
-                                        mysql.con.query(query6, function (error, result5) {//each plan的 punishment
+                                        let query6 = `SELECT punishment FROM punish where plan_id = ?`;
+                                        mysql.con.query(query6,[result[i].id], function (error, result5) {//each plan的 punishment
                                             if (error) {
                                                 reject("Database query error" + error);
                                                 return;
                                             }
                                             for (let m = 0; m < result5.length; m++) {
                                                 let tomorrow = parseInt(result2[j].day) + 1;
-                                                let query7 = `INSERT INTO planning(plan_id,day,status,plan) VALUES(${result[i].id},${tomorrow},0,"${result5[m].punishment}")`;
-                                                mysql.con.query(query7, function (error) {
+                                                let data = {
+                                                    plan_id:result[i].id,
+                                                    day:tomorrow,
+                                                    status:0,
+                                                    plan:result5[m].punishment
+                                                }
+                                                let query7 = `INSERT INTO planning SET ?`;
+                                                mysql.con.query(query7,data, function (error) {
                                                     if (error) {
                                                         reject("Database query error" + error);
                                                         return;

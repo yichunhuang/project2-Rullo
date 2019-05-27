@@ -30,7 +30,7 @@ module.exports = {
                     let plan_id = result[0].id;
                     //rules
                     if (!hiddenRule) {
-                        let query = "INSERT INTO rules(plan_id) VALUES ?;";
+                        let query = "INSERT INTO rules(plan_id) VALUES ?";
                         mysql.con.query(query,[plan_id], function (error) {
                             if (error) {
                                 reject("Database query error");

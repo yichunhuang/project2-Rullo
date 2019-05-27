@@ -13,8 +13,8 @@ router.get("/:category", function(req, res){
         });
       }else if ( category === 'private' ) { 
         let { name } = req.query;
-        let query = `SELECT * FROM plan where user_name="${name}"`;
-        mysql.con.query(query, function (error, result) {
+        let query = `SELECT * FROM plan where user_name=?`;
+        mysql.con.query(query,[name], function (error, result) {
             if (error) {
                 res.send("Database query error" + error);
             }
@@ -34,8 +34,8 @@ router.get("/:category", function(req, res){
       }else if (category==='userSearch'){
         var search = req.query.search;
         var name = JSON.stringify(req.query.name);
-        let querys = `SELECT * FROM plan WHERE topic LIKE '%`+ search + `%' AND user_name=${name}`;
-        mysql.con.query(querys, function (error, result) {
+        let querys = `SELECT * FROM plan WHERE topic LIKE '%`+ search + `%' AND user_name=?`;
+        mysql.con.query(querys,[name], function (error, result) {
             if (error) {
                 res.send("Database query error" + error);
             }

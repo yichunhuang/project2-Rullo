@@ -63,8 +63,8 @@ router.post('/accesstoken', (req, res) => {
   let accessToken = bearer.replace('Bearer G_ENABLED_IDPS=google; G_AUTHUSER_H=0; ','');//console.log(accessToken); 
   let access_token = JSON.stringify(accessToken);//console.log(typeof access_token);
   let data ={};
-  let sql = `SELECT * FROM member WHERE accesstoken =${access_token}`;
-  mysql.con.query(sql,(err, result) => {
+  let sql = `SELECT * FROM member WHERE accesstoken = ?`;
+  mysql.con.query(sql,[access_token],(err, result) => {
     if (err) throw err;
     if (!result[0]) {
       res.send({error:"wrong token"});

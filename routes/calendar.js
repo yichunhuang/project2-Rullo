@@ -32,8 +32,8 @@ router.get('/api/get', (req, res) => {
     });
     function createEvents(auth) {
         const calendar = google.calendar({ version: 'v3', auth });
-        let query = `SELECT * FROM plan WHERE id=${plan_id}`;
-        mysql.con.query(query, function (error, result) {
+        let query = `SELECT * FROM plan WHERE id=?`;
+        mysql.con.query(query,[plan_id], function (error, result) {
             if (error) {
                 res.send("Database query error" + error);
             }
@@ -42,8 +42,8 @@ router.get('/api/get', (req, res) => {
             let endtime = parseInt(starttime + (result[0].period - 1) * 86400000);
             let enddate = new Date(endtime);
             //rules
-            let query = `SELECT rule FROM rules WHERE plan_id=${plan_id}`;
-            mysql.con.query(query, function (error, resultr) {
+            let query = `SELECT rule FROM rules WHERE plan_id=?`;
+            mysql.con.query(query,[plan_id], function (error, resultr) {
                 if (error) {
                     res.send("Database query error" + error);
                 }
@@ -86,8 +86,8 @@ router.get('/api/get', (req, res) => {
                     });
                 }
                 //planning
-                let query = `SELECT pt.plan_id,pt.day,pt.time,planning.plan FROM periodTime AS pt,planning WHERE planning.plan_id = pt.plan_id AND planning.day = pt.day AND planning.plan_id =${plan_id}`;
-                mysql.con.query(query, function (error, resultp) {
+                let query = `SELECT pt.plan_id,pt.day,pt.time,planning.plan FROM periodTime AS pt,planning WHERE planning.plan_id = pt.plan_id AND planning.day = pt.day AND planning.plan_id =?`;
+                mysql.con.query(query,[plan_id], function (error, resultp) {
                     if (error) {
                         return console.log("Database query error" + error);
                     }
@@ -128,8 +128,8 @@ router.get('/api/get', (req, res) => {
                         }
                     }
                     //comment
-                    let query = `SELECT pt.plan_id,pt.day,pt.time,c.comment FROM periodTime AS pt,comment AS c WHERE c.plan_id = pt.plan_id AND c.day = pt.day AND c.plan_id =${plan_id}`;
-                    mysql.con.query(query, function (error, resultc) {
+                    let query = `SELECT pt.plan_id,pt.day,pt.time,c.comment FROM periodTime AS pt,comment AS c WHERE c.plan_id = pt.plan_id AND c.day = pt.day AND c.plan_id = ?`;
+                    mysql.con.query(query,[plan_id], function (error, resultc) {
                         if (error) {
                             return console.log("Database query error" + error);
                         }
