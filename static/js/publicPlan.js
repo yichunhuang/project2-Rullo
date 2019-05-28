@@ -74,7 +74,7 @@ function publicDayNum(period) {
 }
 function publicDayContent(i, j) {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://17runa.com/perday?DAY=" + j + "&" + "plan_id=" + planId);
+    xhr.open("GET", "https://17runa.com/perDay?DAY=" + j + "&" + "plan_id=" + planId);
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             let result2 = JSON.parse(xhr.responseText);//JSON.parse:將字串轉換成物件

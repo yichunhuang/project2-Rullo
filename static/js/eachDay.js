@@ -95,7 +95,7 @@ function eachDayBlock() {
 eachDayBlock();
 function getOldEachDayData() {
     let req = new XMLHttpRequest();
-    req.open("GET", "https://17runa.com/perday?DAY=" + day + "&" + "plan_id=" + planId);
+    req.open("GET", "https://17runa.com/perDay?DAY=" + day + "&" + "plan_id=" + planId);
     req.onreadystatechange = function () {
         if (req.readyState === 4 && req.status === 200) {
             let result = JSON.parse(req.responseText);//JSON.parse:將字串轉換成物件
@@ -236,7 +236,7 @@ function editPlanning() {//delete old planning data
     }
     let data = JSON.stringify(plan);
     let req = new XMLHttpRequest();
-    req.open("POST", "../deletePerDay");
+    req.open("DELETE", "../perDay");
     req.setRequestHeader("Content-Type", "application/json; charset=UTF-8", "form-data");
     req.onload = function () {
         savePlanning();//insert new planning data

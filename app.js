@@ -121,8 +121,8 @@ app.post("/perDay", function (req, res) {
     });
 });
 //perDay2.html (day.html不確定要不要用)
-app.get("/perday", function (req, res) {
-    // http://localhost:3000/perday?DAY="+ j + "&;" + "plan_id=" + plan_id
+app.get("/perDay", function (req, res) {
+    // http://localhost:3000/perDay?DAY="+ j + "&;" + "plan_id=" + plan_id
     let { DAY } = req.query;
     let { plan_id } = req.query;
     if (!plan_id || plan_id === undefined) { res.send("Please enter plan_id value.") }
@@ -133,10 +133,8 @@ app.get("/perday", function (req, res) {
         res.send({ error: error });
     });
 });
-app.post("/deletePerDay", function (req, res) {
+app.delete("/perDay", function (req, res) {
     let data = req.body;
-    //console.log("hi",data);
-    //res.send(data);
     dao.plan.deletePerDay(data).then(function (result) {
         res.send(result);
     }).catch(function (error) {
