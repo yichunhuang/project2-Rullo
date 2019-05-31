@@ -77,6 +77,6 @@ Edit daily plan:
 
 ![](https://upload.cc/i1/2019/05/21/dJvCc0.png)
 
-- [APIs Doc](APIs Doc.md)
+- [APIs Doc](doc/APIs-doc.md)
 
 
