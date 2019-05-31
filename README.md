@@ -12,7 +12,6 @@ Website URL: https://17runa.com/index
 ### SQL Database
 - MySQL
 - CRUD
-- Data Models: One-to-One, One-to-Many, Many-to-Many
 - Database Optimization: Primary Key, Foreign Key
 ### Cloud Service
 - AWS EC2
